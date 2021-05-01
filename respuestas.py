@@ -1,13 +1,20 @@
 from covidsqlbase  import CovidDataBase
-
+from parameters import PATH_LISTA_COMUNAS
+import pandas as pd
 
 class Respuesta:
 
     def __init__(self):
         self.covid_data_base = CovidDataBase
 
-
-    
+    @property
+    def get_comunas(self):
+        fileDir = PATH_LISTA_COMUNAS
+        comunas = pd.read_csv(fileDir).Comuna.values
+        
+        comunas = [c for c in comunas if "Desconocido" not in c]
+        return comunas
+        
 
     def registro_response(self, user_id):
         # Comprobar que el usuario este en la base
