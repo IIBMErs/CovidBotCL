@@ -1,5 +1,3 @@
-
-
 # Path a archivos .csv necesarios para obtener la información en datos
 
 # Se optive de producto 1 Archivo "Covid-19.csv"
