@@ -1,5 +1,9 @@
-# Path a archivos .csv necesarios para obtener la información en datos
+# Path Base de datos
+RUTA_BASE = 'base.sqlite'
 
+
+
+# Path a archivos .csv necesarios para obtener la información en datos
 # Se optive de producto 1 Archivo "Covid-19.csv"
 PATH_CASOS_INCREMENTALES = "../Datos-COVID19/output/producto1/Covid-19.csv"
 
@@ -8,4 +12,3 @@ PATH_CASOS_DIARIOS = "../Datos-COVID19/output/producto25/CasosActualesPorComuna.
 
 # Obtener lista de Comunas, se obtiene de producto 1, archivo "Covid-19.csv"
 PATH_LISTA_COMUNAS = "../Datos-COVID19/output/producto1/Covid-19.csv"
-

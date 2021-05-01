@@ -1,10 +1,11 @@
 import sqlite3
 from sqlite3 import Error
 import os
+from parameters import RUTA_BASE
 
 class CovidDataBase():
     def __init__(self):
-        self.con = sqlite3.connect('base.sqlite')
+        self.con = sqlite3.connect(RUTA_BASE)
         self.con.execute("PRAGMA foreign_keys = OFF")
         self.cursor = self.con.cursor()
 
@@ -107,4 +108,4 @@ class CovidDataBase():
 
 if __name__ == "__main__":
     os.system('clear')
-    db = Db()
+    db = CovidDataBase()
