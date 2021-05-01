@@ -1,5 +1,5 @@
 # Path Base de datos
-RUTA_BASE = 'base.sqlite'
+PATH_BASE = 'base.sqlite'
 
 
 
