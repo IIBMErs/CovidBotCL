@@ -68,10 +68,22 @@ def menu_registro(update: Update, context: CallbackContext):
     return REGISTRO
     
 
-def ingresarComuna(update: Update, context: CallbackContext):
+def ingresar_comuna(update: Update, context: CallbackContext):
     query = update.callback_query
     query.answer()
-    query.edit_message_text(text="Escriba @coronaChile_bot y posteriormente el nombre de la comuna para registrarla")
+    query.edit_message_text(text="Escriba @coronaChile_bot y posteriormente el nombre de la comuna para registrarla.")
+
+def borrar_comuna(update: Update, context: CallbackContext):
+    message_text = update.message.text.replace("/borrar","").title().strip()  # Nombre comuna
+    user_id = update.message.from_user.id
+
+    response_text = respuesta.borrar_comuna_response(user_id, message_text, COMUNAS)
+    update.message.reply_text(response_text, parse_mode='MarkdownV2')
+
+def eliminar_comuna(update: Update, context: CallbackContext) -> None:
+    query = update.callback_query
+    query.answer()
+    query.edit_message_text(text="Escriba /borrar seguido por nombre de la comuna para borrarla.")
 
 def inlinequery_comunas(update: Update, context: CallbackContext):
     """Handle the inline query."""
@@ -124,7 +136,8 @@ def main():
                 CallbackQueryHandler(salir, pattern="salir")
             ],
             REGISTRO: [
-                CallbackQueryHandler(ingresarComuna, pattern="ingresarComuna"),
+                CallbackQueryHandler(ingresar_comuna, pattern="ingresarComuna"),
+                CallbackQueryHandler(eliminar_comuna, pattern="eliminarComuna"),
                 CallbackQueryHandler(start_over, pattern="volver")
 
             ]
@@ -133,6 +146,9 @@ def main():
         },
         fallbacks=[CommandHandler('start',start)]
     )
+
+    # Command handler
+    dispatcher.add_handler(CommandHandler('borrar',borrar_comuna))
 
     # updates
     dispatcher.add_handler(conv_handler)
