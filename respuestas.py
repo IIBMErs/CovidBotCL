@@ -5,6 +5,9 @@ from fases import Fase
 from telegram import Update, Bot
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, CallbackContext
 from telegram import InlineKeyboardButton, InlineKeyboardMarkup, Update
+from send import Enviar
+
+
 class Respuesta:
 
     def __init__(self):
@@ -132,6 +135,21 @@ class Respuesta:
                 else:
                     base.suscribe2Dato(user_id, nombre_dato)
                     query.edit_message_text("Suscrito exitosamente!")
+
+    def datos_call(self, update: Update, context: CallbackContext) -> None:
+        query = update.callback_query
+        query.answer()
+
+        user_id = update.effective_user.id
+        nombre_dato = query['data']
+        enviar = Enviar()
+
+
+        with self.covid_data_base() as base:
+            user_comunas = base.getUserComunas(user_id)
+            for comuna in user_comunas:
+                enviar.imagen(nombre_dato, comuna[0], user_id)
+            query.edit_message_text("Enviado!")
 
 
 

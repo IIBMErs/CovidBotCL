@@ -131,9 +131,34 @@ def callbacks_notificaciones(update: Update, context: CallbackContext):
 
     callbacks_list.append(CallbackQueryHandler(start_over, pattern='volver'))
     
-    print(callbacks_notificaciones)
-
     return callbacks_list
+
+
+def menu_datos(update: Update, context: CallbackContext):
+    # Entrega las opciones del menu de notificaciones
+    query = update.callback_query
+    query.answer()
+
+
+    user_id = update.effective_user.id 
+    keyboard_menu_datos = menu.datos(user_id)
+    reply_markup = InlineKeyboardMarkup(keyboard_menu_datos)
+
+    query.edit_message_text("Presiona el dato que quieras saber!", reply_markup=reply_markup)
+
+    return DATOS
+
+def callbacks_datos(update: Update, context: CallbackContext):
+    datos_disponibles = [info[1] for info in INFO_DATOS]
+    
+    callbacks_list = []
+    for dato in datos_disponibles:
+        callbacks_list.append(CallbackQueryHandler(respuesta.datos_call, pattern=dato))
+
+    callbacks_list.append(CallbackQueryHandler(start_over, pattern='volver'))
+    
+    return callbacks_list
+
 
 
 
@@ -164,6 +189,7 @@ def main():
             PRINCIPAL: [
                 CallbackQueryHandler(menu_registro, pattern="menu_registro"),
                 CallbackQueryHandler(menu_notificaciones, pattern="notificaciones"),
+                CallbackQueryHandler(menu_datos, pattern="datos"),
                 CallbackQueryHandler(salir, pattern="salir"),
             ],
             REGISTRO: [
@@ -171,8 +197,8 @@ def main():
                 CallbackQueryHandler(eliminar_comuna, pattern="eliminarComuna"),
                 CallbackQueryHandler(start_over, pattern="volver")
             ],
-            NOTIFICACIONES: callbacks_notificaciones(Update, CallbackContext)
-
+            NOTIFICACIONES: callbacks_notificaciones(Update, CallbackContext),
+            DATOS: callbacks_datos(Update, CallbackContext)
 
         },
         fallbacks=[CommandHandler('start',start)]
@@ -197,7 +223,7 @@ if __name__ == "__main__":
     os.system('clear')
 
     # Event rulers
-    PRINCIPAL, REGISTRO, NOTIFICACIONES, FORTH = range(4)
+    PRINCIPAL, REGISTRO, NOTIFICACIONES, DATOS = range(4)
 
     # Contains and generates all the menus
     menu = Menu() 
