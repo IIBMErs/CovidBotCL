@@ -160,6 +160,8 @@ def callbacks_datos(update: Update, context: CallbackContext):
     return callbacks_list
 
 
+def enviar_notificaciones(context: CallbackContext):
+    pass
 
 
     
@@ -180,6 +182,10 @@ def main():
 
     # Get the dispatcher to register handlers
     dispatcher = updater.dispatcher
+
+    # Notificaciones
+    repeate = updater.job_queue
+    repeate.run_repeating(enviar_notificaciones, first=1, interval=5, name="notificaciones")
 
     
     # Start conversation
