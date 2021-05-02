@@ -75,6 +75,29 @@ class Respuesta:
         return text
 
 
+    def borrar_comuna_response(self, user_id, message, COMUNAS):
+        # Comprobar que el nombre de la comuna este en message
+        if message not in COMUNAS:
+            text = "Porfavor escribe un nombre de comuna valido\."
+            return text
+
+        # Si el usuario se encuentra registrado
+        if self.user_in_base(user_id):
+            with self.covid_data_base() as base:
+                # Se comprueba que si la comuna esta registrara para el usuario user_id
+                if (message,) in base.getUserComunas(user_id):
+                    base.unsuscribeComuna(user_id, message)
+                    text = f"La comuna *{message}* se borro con exito\."
+                else:
+                    text = f"Usted no se encuentra suscrito a la comuna *{message}*\."
+
+     
+        else:
+            text = "No cuenta con comunas registradas\."
+
+        return text
+
+
     def user_in_base(self, user_id):
         with self.covid_data_base() as base:
             if (user_id,) in base.getUsers():
