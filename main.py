@@ -9,7 +9,7 @@ from uuid import uuid4
 # Cargar parametros
 from bot_token import TOKEN
 from parameters import NOMBRE_BOT
-
+from parameters import INFO_DATOS
 
 # Enable logging
 logging.basicConfig(
@@ -66,6 +66,7 @@ def menu_registro(update: Update, context: CallbackContext):
     # Actualizar respuesta
     query.edit_message_text(response_text, reply_markup=reply_markup, parse_mode='MarkdownV2')
     return REGISTRO
+
     
 
 def ingresar_comuna(update: Update, context: CallbackContext):
@@ -107,6 +108,35 @@ def recivir_mensaje(update: Update, context: CallbackContext):
     response_text = respuesta.agregar_comuma_response(user_id, message_text, COMUNAS)
     update.message.reply_text(response_text, parse_mode='MarkdownV2')
 
+def menu_notificaciones(update: Update, context: CallbackContext):
+    # Entrega las opciones del menu de notificaciones
+    query = update.callback_query
+    query.answer()
+
+
+    user_id = update.effective_user.id 
+    keyboard_menu_notificaciones = menu.notificaciones(user_id)
+    reply_markup = InlineKeyboardMarkup(keyboard_menu_notificaciones)
+
+    query.edit_message_text("Selecciona aquellas que te quieres suscribir", reply_markup=reply_markup)
+
+    return NOTIFICACIONES
+
+def callbacks_notificaciones(update: Update, context: CallbackContext):
+    datos_disponibles = [info[1] for info in INFO_DATOS]
+    
+    callbacks_list = []
+    for dato in datos_disponibles:
+        callbacks_list.append(CallbackQueryHandler(respuesta.notificaciones_call, pattern=dato))
+
+    callbacks_list.append(CallbackQueryHandler(start_over, pattern='volver'))
+    
+    print(callbacks_notificaciones)
+
+    return callbacks_list
+
+
+
     
 
 def salir(update: Update, context: CallbackContext) -> None:
@@ -133,14 +163,15 @@ def main():
         states={
             PRINCIPAL: [
                 CallbackQueryHandler(menu_registro, pattern="menu_registro"),
-                CallbackQueryHandler(salir, pattern="salir")
+                CallbackQueryHandler(menu_notificaciones, pattern="notificaciones"),
+                CallbackQueryHandler(salir, pattern="salir"),
             ],
             REGISTRO: [
                 CallbackQueryHandler(ingresar_comuna, pattern="ingresarComuna"),
                 CallbackQueryHandler(eliminar_comuna, pattern="eliminarComuna"),
                 CallbackQueryHandler(start_over, pattern="volver")
-
-            ]
+            ],
+            NOTIFICACIONES: callbacks_notificaciones(Update, CallbackContext)
 
 
         },
@@ -166,7 +197,7 @@ if __name__ == "__main__":
     os.system('clear')
 
     # Event rulers
-    PRINCIPAL, REGISTRO, THIRD, FORTH = range(4)
+    PRINCIPAL, REGISTRO, NOTIFICACIONES, FORTH = range(4)
 
     # Contains and generates all the menus
     menu = Menu() 

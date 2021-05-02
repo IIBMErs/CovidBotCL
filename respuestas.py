@@ -1,9 +1,10 @@
 from covidsqlbase  import CovidDataBase
-from parameters import PATH_LISTA_COMUNAS, NOMBRE_BOT
+from parameters import PATH_LISTA_COMUNAS, NOMBRE_BOT, INFO_DATOS
 import pandas as pd
 from fases import Fase
-
-
+from telegram import Update, Bot
+from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, CallbackContext
+from telegram import InlineKeyboardButton, InlineKeyboardMarkup, Update
 class Respuesta:
 
     def __init__(self):
@@ -94,8 +95,8 @@ class Respuesta:
      
         else:
             text = "No cuenta con comunas registradas\."
-
         return text
+
 
 
     def user_in_base(self, user_id):
@@ -104,6 +105,33 @@ class Respuesta:
                 return True      
             else:
                 return False
+
+
+
+    def notificaciones_call(self, update: Update, context: CallbackContext) -> None:
+        query = update.callback_query
+        query.answer()
+
+        nombre_dato = query['data']
+
+
+
+        user_id = update.effective_user.id
+
+        with self.covid_data_base() as base:
+            user_data_suscription = base.getUserDatos(user_id)
+            # Si el usuario no esta suscrito
+            if user_data_suscription == []:
+                base.suscribe2Dato(user_id, nombre_dato)
+                query.edit_message_text("Suscrito exitosamente!")
+            else:
+                user_data_suscription  =[dato[0] for dato in user_data_suscription]
+                if nombre_dato in user_data_suscription:
+                    base.unsuscribeDato(user_id, nombre_dato)
+                    query.edit_message_text("Notificación detenida exitosamente!")
+                else:
+                    base.suscribe2Dato(user_id, nombre_dato)
+                    query.edit_message_text("Suscrito exitosamente!")
 
 
 

@@ -46,7 +46,7 @@ class Menu:
                     info_menu[info[0] + "  \U00002705"] = info[1]
                 else:
                     info_menu[info[0]] = info[1]
-
+        info_menu['Volver'] = "volver"
         return info_menu
 
     def datos(self, user_id):
