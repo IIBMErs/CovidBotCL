@@ -13,6 +13,6 @@ class Enviar:
         resp = requests.post(f"https://api.telegram.org/bot{self.token}/sendPhoto?chat_id={user_id}",files=files)
         print(resp)
 
-    def sendText(user_id, text):
+    def texto(self, user_id, text):
         resp = requests.post(f"https://api.telegram.org/bot{self.token}/sendMessage?chat_id={user_id}&text={text}")
         print(resp)
