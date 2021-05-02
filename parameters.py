@@ -16,3 +16,14 @@ PATH_LISTA_COMUNAS = "../Datos-COVID19/output/producto1/Covid-19.csv"
 
 # Fases de las comunas
 PATH_FASES = "../Datos-COVID19/output/producto74/paso_a_paso.csv"
+
+
+
+# Datos 
+
+INFO_DATOS = [
+    ["Casos Incrementales","casosIncrementales",PATH_CASOS_INCREMENTALES],
+    ["Casos Diarios","casosDiarios",PATH_CASOS_DIARIOS],
+    ["Incidencia","incidencia","asdfasd"],
+    ["Fase comuna","faseComuna","asdf"]
+] 
