@@ -8,7 +8,7 @@ from respuestas import Respuesta
 from uuid import uuid4
 # Cargar parametros
 from bot_token import TOKEN
-from parameters import COMUNAS
+from parameters import NOMBRE_BOT
 
 
 # Enable logging
@@ -32,6 +32,21 @@ def start(update: Update, context: CallbackContext) -> int:
     
     # Actualizar Mensaje
     update.message.reply_text("Bienvenido a CoronaBot Chile. ¿Que deseas hacer?",reply_markup=reply_markup)
+    return PRINCIPAL
+
+
+def start_over(update: Update, context: CallbackContext) -> None:
+    """Send message on `/start`."""
+    # Get user that sent /start and log his name
+    query = update.callback_query
+    query.answer()
+
+    # Genera elementos del menu principal
+    keyboard_menu_principal = menu.principal
+    reply_markup = InlineKeyboardMarkup(keyboard_menu_principal)
+    
+    # Actualizar Mensaje
+    query.edit_message_text(f"Bienvenido a {NOMBRE_BOT}. ¿Que deseas hacer?",reply_markup=reply_markup)
     return PRINCIPAL
 
 def menu_registro(update: Update, context: CallbackContext):
@@ -75,10 +90,21 @@ def recivir_mensaje(update: Update, context: CallbackContext):
     # Recive inputs del usuario para agregar comunas
     
     message_text = update.message.text
-    user_id = update.messsage.from_user.id
+    user_id = update.message.from_user.id
+    
+    response_text = respuesta.agregar_comuma_response(user_id, message_text, COMUNAS)
+    update.message.reply_text(response_text, parse_mode='MarkdownV2')
 
+    
 
+def salir(update: Update, context: CallbackContext) -> None:
+    """Returns `ConversationHandler.END`, which tells the
+    ConversationHandler that the conversation is over"""
+    query = update.callback_query
+    query.answer()
+    query.edit_message_text(text=f"Gracias por usar {NOMBRE_BOT}. Te mantendremos informado!")
 
+    return ConversationHandler.END
 
 
 def main():
@@ -94,11 +120,13 @@ def main():
         entry_points=[CommandHandler('start',start)],
         states={
             PRINCIPAL: [
-                CallbackQueryHandler(menu_registro, "menu_registro")
-                
+                CallbackQueryHandler(menu_registro, pattern="menu_registro"),
+                CallbackQueryHandler(salir, pattern="salir")
             ],
             REGISTRO: [
-                CallbackQueryHandler(ingresarComuna, "ingresarComuna")
+                CallbackQueryHandler(ingresarComuna, pattern="ingresarComuna"),
+                CallbackQueryHandler(start_over, pattern="volver")
+
             ]
 
 
@@ -108,16 +136,14 @@ def main():
 
     # updates
     dispatcher.add_handler(conv_handler)
-    dispatcher.add_handler(InlineQueryHandler(inlinequery_comunas))
-
-
-    # dispatcher.add_handler(MessageHandler(Filters.text & ~Filters.command, message))    
+    #dispatcher.add_handler(InlineQueryHandler(inlinequery_comunas))
+    dispatcher.add_handler(MessageHandler(Filters.text & ~Filters.command, recivir_mensaje))    
 
 
     # Start the bot
     updater.start_polling()
     updater.idle()
-    pass
+    
 
 if __name__ == "__main__":
     import os
@@ -129,7 +155,7 @@ if __name__ == "__main__":
     # Contains and generates all the menus
     menu = Menu() 
     respuesta = Respuesta()
-    
+    COMUNAS = Respuesta().get_comunas
 
 
     main()
