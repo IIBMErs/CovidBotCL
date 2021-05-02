@@ -8,6 +8,7 @@ from respuestas import Respuesta
 from uuid import uuid4
 # Cargar parametros
 from bot_token import TOKEN
+from parameters import COMUNAS
 
 
 # Enable logging
@@ -57,7 +58,7 @@ def ingresarComuna(update: Update, context: CallbackContext):
     query.answer()
     query.edit_message_text(text="Escriba @coronaChile_bot y posteriormente el nombre de la comuna para registrarla")
 
-def inlinequery_comunas(update: Update, context: CallbackContext) -> None:
+def inlinequery_comunas(update: Update, context: CallbackContext):
     """Handle the inline query."""
     query = update.inline_query.query.lower()
     listaComunas = [c for c in COMUNAS if query in c.lower().strip()]
@@ -68,6 +69,16 @@ def inlinequery_comunas(update: Update, context: CallbackContext) -> None:
             ) for t in listaComunas       
     ]
     update.inline_query.answer(results)
+
+
+def recivir_mensaje(update: Update, context: CallbackContext):
+    # Recive inputs del usuario para agregar comunas
+    
+    message_text = update.message.text
+    user_id = update.messsage.from_user.id
+
+
+
 
 
 def main():
@@ -118,7 +129,7 @@ if __name__ == "__main__":
     # Contains and generates all the menus
     menu = Menu() 
     respuesta = Respuesta()
-    COMUNAS = respuesta.get_comunas
+    
 
 
     main()

@@ -1,3 +1,5 @@
+from respuestas import Respuesta
+
 # Path Base de datos
 PATH_BASE = 'base.sqlite'
 
@@ -12,3 +14,6 @@ PATH_CASOS_DIARIOS = "../Datos-COVID19/output/producto25/CasosActualesPorComuna.
 
 # Obtener lista de Comunas, se obtiene de producto 1, archivo "Covid-19.csv"
 PATH_LISTA_COMUNAS = "../Datos-COVID19/output/producto1/Covid-19.csv"
+
+# Lista con los nombres de las comunas
+COMUNAS = Respuesta().get_comunas
