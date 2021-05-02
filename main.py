@@ -10,6 +10,9 @@ from uuid import uuid4
 from bot_token import TOKEN
 from parameters import NOMBRE_BOT
 from parameters import INFO_DATOS
+from parameters import PATH_COVID
+from check_updates import CheckData
+
 
 # Enable logging
 logging.basicConfig(
@@ -161,7 +164,15 @@ def callbacks_datos(update: Update, context: CallbackContext):
 
 
 def enviar_notificaciones(context: CallbackContext):
-    pass
+    
+    (status_update, datos_updated) = check_data.check_nueva_data()
+
+    if not status_update:   # si no hay nueva data return
+        return
+
+    respuesta.enviar_notificaciones(datos_updated)
+
+    
 
 
     
@@ -185,7 +196,7 @@ def main():
 
     # Notificaciones
     repeate = updater.job_queue
-    repeate.run_repeating(enviar_notificaciones, first=1, interval=5, name="notificaciones")
+    repeate.run_repeating(enviar_notificaciones, first=1, interval=60, name="notificaciones")
 
     
     # Start conversation
@@ -215,7 +226,7 @@ def main():
 
     # updates
     dispatcher.add_handler(conv_handler)
-    #dispatcher.add_handler(InlineQueryHandler(inlinequery_comunas))
+    dispatcher.add_handler(InlineQueryHandler(inlinequery_comunas))
     dispatcher.add_handler(MessageHandler(Filters.text & ~Filters.command, recivir_mensaje))    
 
 
@@ -235,6 +246,6 @@ if __name__ == "__main__":
     menu = Menu() 
     respuesta = Respuesta()
     COMUNAS = Respuesta().get_comunas
-
+    check_data = CheckData(PATH_COVID, INFO_DATOS)
 
     main()
