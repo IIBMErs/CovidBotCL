@@ -12,6 +12,7 @@ class Respuesta:
 
     def __init__(self):
         self.covid_data_base = CovidDataBase
+        self.info_datos = INFO_DATOS
 
     @property
     def get_comunas(self):
@@ -103,6 +104,7 @@ class Respuesta:
 
 
     def user_in_base(self, user_id):
+        # Verifica si el usuario esta en la base
         with self.covid_data_base() as base:
             if (user_id,) in base.getUsers():
                 return True      
@@ -150,6 +152,51 @@ class Respuesta:
             for comuna in user_comunas:
                 enviar.imagen(nombre_dato, comuna[0], user_id)
             query.edit_message_text("Enviado!")
+
+
+
+    def enviar_notificaciones(self, datos_updated):
+        enviar = Enviar()
+        
+        with self.covid_data_base() as base:
+            users = base.getUsers()
+
+            # Iterar sobre usuarios
+            for user_id in users:
+                # Obtener las comunas del usuario
+                comunas = base.getUserComunas(user_id[0])
+                if comunas == []:
+                    continue
+
+                # Obtener los datos suscritos del usuario
+                datos = base.getUserDatos(user_id[0])
+                if datos == []:
+                    continue
+                
+                primer_mensaje = False
+                # Itera sobre los datos
+                for dato in datos: 
+                    # Comprueba que el dato fue actualizo 
+                    if dato[0] in datos_updated:
+                        if primer_mensaje == False:
+                            # Se encia el primer mensaje con tl tipo de data
+                            texto = f"Enviando actualización: {self.dict_info_datos[dato[0]]} "
+                            enviar.texto(user_id[0], texto)
+                            primer_mensaje = True
+                        
+                        for comuna in comunas:
+                            enviar.imagen(dato[0], comuna[0], user_id[0])
+                        primer_mensaje = False
+
+    @property
+    def dict_info_datos(self):
+        # Diccionario de INFO_DATOS
+        dic = {}
+        for info in self.info_datos:
+            dic[info[1]] = info[0]
+        return dic
+
+
 
 
 
