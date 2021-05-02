@@ -90,7 +90,7 @@ class CasosDiarios(Data):
     
 
 
-def todos_los_datos():
+def generar_todos_los_plots():
     lista_datos = [
         CasosDiarios("casosDiarios", PATH_CASOS_DIARIOS),
         CasosIncrementales("casosIncrementales", PATH_CASOS_INCREMENTALES)
@@ -103,4 +103,4 @@ if __name__ == "__main__":
     from parameters import PATH_CASOS_DIARIOS, PATH_CASOS_INCREMENTALES
     test = CasosIncrementales("casosDiarios", PATH_CASOS_INCREMENTALES)
 
-    todos_los_datos()
+    generar_todos_los_plots()
