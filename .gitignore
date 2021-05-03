@@ -1,0 +1,5 @@
+/.vscode
+/__pycache__
+bot_token.py
+/images
+.DS_Store
