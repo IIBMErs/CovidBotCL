@@ -8,6 +8,7 @@ from abc import ABC, abstractmethod
 import parameters as p
 from plotly.subplots import make_subplots
 import plotly.graph_objects as go
+from plotly.io import write_image
 from datetime import datetime
 from fases import Fase
 import locale
@@ -48,34 +49,12 @@ class Data(ABC):
     def comunas(self):
         comunas = self.data['Comuna'].values
         comunas = [c for c in comunas if "Desconocido" not in c and "Total" not in c]
+
         return comunas
 
     def leer_paso_a_paso(self):
         with open(p.PATH_PASO_A_PASO) as json_file:
             self.paso_a_paso = json.load(json_file)
-
-    
-    def info_fase(self, comuna):
-        fase = self.fase.fase_de_comuna(comuna)
-        lista_info = []
-        texto =  self.paso_a_paso[str(fase)]
-
-        diff_pos_y = 0
-        for t in texto:
-            dic = dict(
-                    text=t,
-                    showarrow=False,
-                    xref="paper",
-                    yref="paper",
-                    x=-0.17,
-                    y=0.95 + diff_pos_y ,
-                    font= 
-                        dict(family="Arial", size=18, color= "white")
-                    )
-            diff_pos_y += -0.07
-            lista_info.append(dic)
-        return lista_info
-
 
 
     def plot(self, comuna, save=True):
@@ -88,15 +67,14 @@ class Data(ABC):
         )
 
         #FIG LINE
-        fig.add_trace(
-            go.Scatter(x=x, y=y,
-                marker=dict(
-                    size=8,
-                    cmax=4,
-                    cmin=0,
-                    color='red'
-                )
-                ),
+        fig.add_trace(go.Scatter(x=x, y=y,
+            marker=dict(
+            size=8,
+            cmax=4,
+            cmin=0,
+            color='red'
+            )
+            ),
             row=2, col=1)
 
 
@@ -105,6 +83,12 @@ class Data(ABC):
         #    showarrow=True,
         #    arrowhead=1)
 
+        try:
+            self.fase.fase_de_comuna(comuna)
+        except:
+            print(comuna)
+            return
+
         annotations =[
                 dict(
                     text="Fuente: MINCIENCIA",
@@ -112,7 +96,7 @@ class Data(ABC):
                     xref="paper",
                     yref="paper",
                     x=1.1,
-                    y=-0.14,
+                    y=-0.18,
                     font_size=15),
             
                 dict(
@@ -137,11 +121,7 @@ class Data(ABC):
                         dict(family="Arial", size=21, color= "white")
                     )
         ] 
-          
-        # append info
-        for info in self.info_fase(comuna):
-            print(info)
-            annotations.append(info)
+
 
         #STYLE
         fig.update_layout(
@@ -149,12 +129,11 @@ class Data(ABC):
             title=f"{self.nombre_dato}: {comuna}",
             margin=dict(r=5, t=25, b=40, l=60),
             width=350,
-            height=350,
+            height=250,
             annotations= annotations )
 
-
-        fig.show()
-
+        #fig.write_image(f"images/{self.nombre_dato}-{comuna}-weeks{self.weeks}.png")
+        fig.write_image(f"images/{self.identificador}-{comuna}-weeks{self.weeks}.png")
 
 
     def test_plot(self):
@@ -215,8 +194,8 @@ class CasosActivos(Data):
 
 def generar_todos_los_plots():
     lista_datos = [
-        CasosDiarios("casosDiarios", p.PATH_CASOS_DIARIOS),
-        CasosIncrementales("casosIncrementales", p.PATH_CASOS_INCREMENTALES)
+        CasosActivos("Casos Activos", "casosActivos", p.PATH_CASOS_ACTIVOS),
+        CasosIncrementales("Casos Incrementales","casosIncrementales", p.PATH_CASOS_INCREMENTALES)
     ]
 
     for dato in lista_datos:
@@ -227,4 +206,4 @@ if __name__ == "__main__":
     os.system('clear')
     test = CasosActivos("Casos Activos", "casosActivos", p.PATH_CASOS_ACTIVOS)
     #test.puntos("Macul")
-    test.plot("Chimbarongo")
+    generar_todos_los_plots()
