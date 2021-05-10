@@ -58,7 +58,7 @@ class Respuesta:
                 text = "Porfavor escribe un nombre de comuna valido\."
                 return text
                 
-        fase = Fase().faseDeComuna(message)  # fase de la comuna en message
+        fase = Fase().fase_de_comuna(message)  # fase de la comuna en message
         # Si el usuario esta registrado
         if self.user_in_base(user_id):
             with self.covid_data_base() as base:
