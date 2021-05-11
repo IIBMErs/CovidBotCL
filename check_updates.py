@@ -17,7 +17,7 @@ class CheckData:
 
         print("Cheking update ...")
 
-        if "Your branch is behind" in output:
+        if "Tu rama está detrás" in output:
             
             # git pull
             os.system(f"git -C {self.ruta_covid} pull")
