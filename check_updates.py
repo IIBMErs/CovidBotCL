@@ -3,6 +3,7 @@ import os
 from time import sleep
 from generar_plots import generar_todos_los_plots
 from parameters import INFO_DATOS, PATH_COVID
+import datetime
 
 
 class CheckData:
