@@ -129,8 +129,10 @@ class CasosIncrementales(Data):
         super().__init__(nombre_data, identificador, ruta_archivo)
 
     def puntos(self, comuna):
-        return super().puntos(comuna)
-
+        comuna_data = self.data[self.data["Comuna"] == comuna]
+        fechas = self.fechas_ultimas_semanas()
+        casos = comuna_data[fechas].values[0]
+        return fechas, casos
 
 class CasosDiarios(Data):
     
@@ -139,6 +141,7 @@ class CasosDiarios(Data):
 
     def puntos(self, comuna):
         return super().puntos(comuna)
+
     
 
 class CasosActivos(Data):
@@ -161,6 +164,6 @@ def generar_todos_los_plots():
 if __name__ == "__main__":
     import os
     os.system('clear')
-    test = CasosActivos("Casos Activos", "casosActivos", p.PATH_CASOS_ACTIVOS)
+    test = CasosIncrementales("Casos Incrementales","casosIncrementales", p.PATH_CASOS_INCREMENTALES)
     #test.puntos("Macul")
-    generar_todos_los_plots()
+    test.generar_plots()
