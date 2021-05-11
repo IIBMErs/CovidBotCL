@@ -59,29 +59,7 @@ class Data(ABC):
 
     def plot(self, comuna, save=True):
         x, y = self.puntos(comuna) 
-        y2 = y[-1]
-        #Init Fig
-        fig = make_subplots( rows=2, cols=1, 
-            specs=[[{"type": "scatter", "rowspan": 1, "colspan":1}], 
-            [{"type": "scatter", "rowspan": 1, "colspan":1}]]
-        )
-
-        #FIG LINE
-        fig.add_trace(go.Scatter(x=x, y=y,
-            marker=dict(
-            size=8,
-            cmax=4,
-            cmin=0,
-            color='red'
-            )
-            ),
-            row=2, col=1)
-
-
-        #fig.add_annotation(x=x[-1], y=y[-1],
-        #    text="Text annotation with arrow",
-        #    showarrow=True,
-        #    arrowhead=1)
+        plt.style.use('dark_background')
 
         try:
             self.fase.fase_de_comuna(comuna)
@@ -89,52 +67,31 @@ class Data(ABC):
             print(comuna)
             return
 
-        annotations =[
-                dict(
-                    text="Fuente: MINCIENCIA",
-                    showarrow=False,
-                    xref="paper",
-                    yref="paper",
-                    x=1.1,
-                    y=-0.18,
-                    font_size=15),
-            
-                dict(
-                    text=f"Comuna en fase {self.fase.fase_de_comuna(comuna)}",
-                    showarrow=False,
-                    xref="paper",
-                    yref="paper",
-                    x=-0.17,
-                    y=1.05,
-                    font= 
-                        dict(family="Arial", size=18, color= "white")
-                    ),
-                dict(
-                    text=f"Casos",
-                    showarrow=False,
-                    xref="paper",
-                    yref="paper",
-                    x=-0.18,
-                    y=0.12,
-                    textangle=-90,
-                    font= 
-                        dict(family="Arial", size=21, color= "white")
-                    )
-        ] 
+
+        fig, (ax1, ax2, ax3) = plt.subplots(3,1, gridspec_kw={'height_ratios':[0.5,4,0.2]})
+        plt.setp(ax2.xaxis.get_majorticklabels(), rotation=45)
+
+        ax2.plot_date(x,y,linestyle='-',color='y',mec='r')
+
+        ax1.axis('off')
+        ax3.axis('off')
 
 
-        #STYLE
-        fig.update_layout(
-            template="plotly_dark",
-            title=f"{self.nombre_dato}: {comuna}",
-            margin=dict(r=5, t=25, b=40, l=60),
-            width=350,
-            height=250,
-            annotations= annotations )
+        x_reverse = x[::-1]
+        x_downsample = x_reverse[:-1:8][::-1]
 
-        #fig.write_image(f"images/{self.nombre_dato}-{comuna}-weeks{self.weeks}.png")
-        fig.write_image(f"images/{self.identificador}-{comuna}-weeks{self.weeks}.png")
 
+        ax2.set_xticks(x_downsample)
+        ax2.set_xticklabels(x_downsample)
+        plt.xlabel('Casos')
+        ax2.grid()
+
+        # Annotations
+        plt.annotate(f"{self.nombre_dato} en {comuna}", xy=(0.1, 0.9),xycoords='figure fraction',fontsize=15)
+        plt.annotate(f"Comuna en fase {self.fase.fase_de_comuna(comuna)}", xy=(0.1, 0.85),xycoords='figure fraction',fontsize=15)
+
+        fig.savefig(f"images/{self.identificador}-{comuna}-weeks{self.weeks}.png")
+        plt.close(fig)
 
     def test_plot(self):
         self.plot('Macul', save=False)
