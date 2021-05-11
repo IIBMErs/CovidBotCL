@@ -196,7 +196,7 @@ def main():
 
     # Notificaciones
     repeate = updater.job_queue
-    repeate.run_repeating(enviar_notificaciones, first=1, interval=60, name="notificaciones")
+    repeate.run_repeating(enviar_notificaciones, first=1, interval=60*10, name="notificaciones")
 
     
     # Start conversation
