@@ -29,7 +29,7 @@ PATH_PASO_A_PASO = 'paso_a_paso.json'
 # Datos 
 INFO_DATOS = [
     ["Casos Incrementales","casosIncrementales",PATH_CASOS_INCREMENTALES],
-    ["Casos Activos","casosActivos",PATH_CASOS_ACTIVOS],
-    ["Fase comuna","faseComuna","asdf"]
+    ["Casos Activos","casosActivos",PATH_CASOS_ACTIVOS]
+    #["Fase comuna","faseComuna","asdf"]
 ] 
 
