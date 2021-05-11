@@ -6,7 +6,7 @@ class Enviar:
 
     def __init__(self):
         self.token = TOKEN
-        self.weeks = 8
+        self.weeks = 32
 
     def imagen(self, dato, comuna, user_id):
         files = {'photo':open(f"images/{dato}-{comuna}-weeks{self.weeks}.png",'rb')}

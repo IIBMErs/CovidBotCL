@@ -23,7 +23,7 @@ class CheckData:
             os.system(f"git -C {self.ruta_covid} pull")
 
 
-            datosUpdated = self.check_update_por_tipo(self.info_datos)
+            datosUpdated = self.check_update_por_tipo()
             if len(datosUpdated)==0:
                 return False, []
 
