@@ -83,7 +83,7 @@ class Data(ABC):
 
         ax2.set_xticks(x_downsample)
         ax2.set_xticklabels(x_downsample)
-        ax2.set_xlabel('Casos')
+        ax2.set_ylabel('Casos')
         ax2.grid()
 
         # Annotations
