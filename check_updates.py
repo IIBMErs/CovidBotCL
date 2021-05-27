@@ -3,6 +3,7 @@ import os
 from time import sleep
 from generar_plots import generar_todos_los_plots
 from parameters import INFO_DATOS, PATH_COVID
+import datetime
 
 
 class CheckData:
@@ -17,7 +18,7 @@ class CheckData:
 
         print("Cheking update ...")
 
-        if "Your branch is behind" in output:
+        if "Tu rama está detrás" in output:
             
             # git pull
             os.system(f"git -C {self.ruta_covid} pull")
